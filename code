@@ -1,0 +1,36 @@
+vehicle_data = [
+    [100, 2500], [120, 2700], [130, 2600],  # Cluster 1
+    [200, 4000], [220, 4200], [210, 4100],  # Cluster 2
+    [300, 5000], [320, 5200], [310, 5100]   # Cluster 3
+]
+k = 3
+max_iterations = 100
+
+centroids = [vehicle_data[i] for i in range(k)]
+
+for _ in range(max_iterations):
+    clusters = [[] for _ in range(k)]
+    
+    for point in vehicle_data:
+        distances = [((point[0] - c[0])**2 + (point[1] - c[1])**2)**0.5 for c in centroids]  # Euclidean Distance
+        closest_cluster = distances.index(min(distances))
+        clusters[closest_cluster].append(point)
+    
+    new_centroids = []
+    for cluster in clusters:
+        if cluster:  
+            avg_hp = sum(p[0] for p in cluster) / len(cluster)
+            avg_weight = sum(p[1] for p in cluster) / len(cluster)
+            new_centroids.append([avg_hp, avg_weight])
+        else:
+            new_centroids.append([0, 0])  # Edge case handling
+
+    if new_centroids == centroids:
+        break  # Stop if centroids don't change
+    centroids = new_centroids
+
+for i, cluster in enumerate(clusters):
+    print(f"Cluster {i+1}: {cluster}")
+
+print("\nFinal Centroids:")
+print(centroids)
